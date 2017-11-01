@@ -30,17 +30,19 @@ class MysqlManager(object):
 
     @staticmethod
     def get_testservice_engine():        
+
         if MysqlManager.__TESTSERVICE_ENGINE == None:
-            db_conf=Configuration.load_section('database')
-            user     = db_conf.get('user')
-            password = db_conf.get('password')
-            host     = db_conf.get('host')
-            instance = db_conf.get('instance')
+            conf = Configuration.load_section( 'database' )
+            user     = conf['user'] 
+            password = conf['password'] 
+            endpoint = "{}:{}".format(conf['host'], conf['port'])
+            instance = conf['instance']
             MysqlManager.__TESTSERVICE_ENGINE = MysqlManager.DBEngine = create_engine( 
-                MysqlManager.MYSQL_ENGINE_SPEC.format(user, password, host, instance), 
+                MysqlManager.MYSQL_ENGINE_SPEC.format(user, password, endpoint, instance), 
                 pool_recycle = 14400 , echo = False 
             )            
         return MysqlManager.__TESTSERVICE_ENGINE
+    
 
     @staticmethod
     def get_testservice_session():
