@@ -4,13 +4,11 @@ Created on Oct 19, 2015
 @author: gddst
 '''
 import httplib
-import json
 import logging
 import traceback
 
 import cherrypy
 
-from resbot.common.constants import ContentType
 from webnode._httperror import HTTPError
 from webnode.renderer import Renderer
 from webnode.utils.http import http_header
@@ -27,7 +25,7 @@ class RESTBase(object):
         err_logger=logging.getLogger('error')
         
         # Set the default content type to application/json
-        cherrypy.response.headers[http_header.CONTENT_TYPE] = ContentType.ApplicationJson
+        cherrypy.response.headers[http_header.CONTENT_TYPE] = "application/json;charset=utf-8"
 
         httpmethod = cherrypy.request.method
         
@@ -54,6 +52,6 @@ class RESTBase(object):
             
 def http_error_handler(status):
     cherrypy.serving.response.status = status
-    cherrypy.response.headers[http_header.CONTENT_TYPE] = ContentType.TextHtml
+    cherrypy.response.headers[http_header.CONTENT_TYPE] = "text/html;charset=utf-8"
     return Renderer.render('error/plain', status=status,
                            reason=httplib.responses.get(status))

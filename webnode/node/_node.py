@@ -14,7 +14,7 @@ from webnode.renderer import Renderer
 
 class Node( object ):
     
-    def __init__(self, path_name, parent, auth=True ):
+    def __init__(self, path_name, parent=None, auth=True ):
         
         self.__path_name = path_name
         self.__parent = parent
