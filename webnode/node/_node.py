@@ -68,6 +68,8 @@ class Node( object ):
         return self.__handler
 
     def response(self,sub_path, http_method,**params):
+
+        http_method = http_method.upper()
         
         if not sub_path:
             if self._auth and params.get('req_user_info') is None:
@@ -104,6 +106,9 @@ class Node( object ):
             
     def head(self, handler):
         self.__handler['HEAD']=handler
+
+    def set_handler(self, method, handler):
+        self.__handler[method] = handler
             
     def options(self, handler):
         self.__handler['OPTIONS']=handler
