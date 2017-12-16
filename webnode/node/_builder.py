@@ -24,7 +24,7 @@ def from_resbot_api(apis, handlers={}, verbose=False):
             parent_node = child_node
 
         # Only the path's last node has a handler
-        handler = handlers.get(name, lambda : "Webnode default response!")
+        handler = handlers.get(name, lambda **kwargs: "Webnode default response!")
         if handler and child_node:
             child_node.set_handler(http_method, handler)
 

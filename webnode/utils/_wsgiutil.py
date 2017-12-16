@@ -1,7 +1,7 @@
 from wsgiref.util import request_uri
 from urlparse import urlparse
 import httplib
-import cherrypy
+from webnode import HTTPError
 
 
 def webnode_wsgi_app(webnodes, environ, start_response):
@@ -18,8 +18,8 @@ def webnode_wsgi_app(webnodes, environ, start_response):
         start_response(status, headers)
 
         return [response]
-    except cherrypy.HTTPError as e:
-        status = '{} {}'.format(e.code, httplib.responses[e.code])
+    except HTTPError as e:
+        status = '{} {}'.format(e.status, httplib.responses[e.status])
         headers = [('Content-type', 'text/plain')]
-
+        start_response(status, headers)
         return [str(e)]
