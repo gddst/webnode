@@ -1,6 +1,7 @@
 from wsgiref.util import request_uri
 from urlparse import urlparse
 import httplib
+import functools
 from webnode import HTTPError
 
 
@@ -12,9 +13,9 @@ def webnode_wsgi_app(webnodes, environ, start_response):
     webnode_environ = environ
 
     try:
-        response = webnodes.response(paths, http_method, **webnode_environ)
+        response, response_type = webnodes.response(paths, http_method, **webnode_environ)
         status = '200 OK'
-        headers = [('Content-type', 'text/plain')]
+        headers = [('Content-type', response_type)]
         start_response(status, headers)
 
         return [response]
@@ -23,3 +24,12 @@ def webnode_wsgi_app(webnodes, environ, start_response):
         headers = [('Content-type', 'text/plain')]
         start_response(status, headers)
         return [str(e)]
+
+
+def content_type(response_type):
+    def handler(f):
+        @functools.wraps(f)
+        def wrapper(*args, **kwargs):
+            return f(*args, **kwargs), response_type
+        return wrapper
+    return handler

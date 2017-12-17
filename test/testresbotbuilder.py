@@ -23,7 +23,10 @@ class Test(unittest.TestCase):
 
         webnodes = from_resbot_api(apis, verbose=True)
 
-        self.assertEqual('Webnode default response!', webnodes.response(['a','b'], 'post'))
+        response, response_type = webnodes.response(['a','b'], 'post')
+
+        self.assertEqual('Webnode default response!', response)
+        self.assertEqual('application/json', response_type)
 
         try:
             webnodes.response(['a', 'b'], 'get')

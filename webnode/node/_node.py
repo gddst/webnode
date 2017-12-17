@@ -14,7 +14,7 @@ from webnode.renderer import Renderer
 
 class Node( object ):
     
-    def __init__(self, path_name, parent=None, auth=True ):
+    def __init__(self, path_name, parent=None, auth=True , response_type='text/plain'):
         
         self.__path_name = path_name
         self.__parent = parent
@@ -91,7 +91,8 @@ class Node( object ):
                 return child.response( sub_path[1:], http_method, **params )
             else:
                 raise HTTPError( httplib.NOT_FOUND )
-    
+
+
     def get(self, handler):
         self.__handler['GET']=handler
         
@@ -112,6 +113,19 @@ class Node( object ):
             
     def options(self, handler):
         self.__handler['OPTIONS']=handler
+
+    def __get_handle_node(self, sub_path):
+        """
+
+        :param sub_path:
+        :return:
+        """
+        if not sub_path:
+            return self
+        else:
+            child = self.get_child(sub_path[0])
+            if child:
+                return child.__get_handle_node(sub_path[1:])
 
     @staticmethod
     def __parse_para( sub_path):

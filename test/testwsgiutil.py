@@ -1,17 +1,14 @@
-from webnode.utils import to_wsgi_app
-from webnode.node import Node
-from wsgiref.simple_server import make_server
-from werkzeug.serving import run_simple
+from webnode.utils import content_type
 
-def testwsgiutil():
-    root = Node('')
-    webnodes = Node("root", root, auth=False)
-    root.dump_tree_path()
 
-    webnodes.get(lambda **kwargs: "hello world")
+def testresponsetype():
 
-    app = to_wsgi_app(root)
-    run_simple('127.0.0.1', 5000, app, use_debugger=True, use_reloader=False)
+    CONTENT_TYPE = "application/json"
 
-if __name__=='__main__':
-    testwsgiutil()
+    @content_type(CONTENT_TYPE)
+    def handler():
+        return "handler", "B"
+
+    ret, response_type = handler()
+
+    assert response_type == CONTENT_TYPE

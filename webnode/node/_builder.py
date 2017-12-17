@@ -1,4 +1,6 @@
 from ._node import Node
+from webnode.utils._wsgiutil import content_type
+
 
 def from_resbot_api(apis, handlers={}, verbose=False):
     """
@@ -24,7 +26,7 @@ def from_resbot_api(apis, handlers={}, verbose=False):
             parent_node = child_node
 
         # Only the path's last node has a handler
-        handler = handlers.get(name, lambda **kwargs: "Webnode default response!")
+        handler = handlers.get(name, default_handler)
         if handler and child_node:
             child_node.set_handler(http_method, handler)
 
@@ -32,3 +34,8 @@ def from_resbot_api(apis, handlers={}, verbose=False):
         root_node.dump_tree_path()
 
     return root_node
+
+
+@content_type("application/json")
+def default_handler(**kwargs):
+    return "Webnode default response!"
