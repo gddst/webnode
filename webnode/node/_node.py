@@ -21,7 +21,7 @@ class Node( object ):
         self.__children = {}
         self.__handler = {}
         self._auth=auth
-        
+
         if parent:
             parent.add_child( self )
         
@@ -74,7 +74,7 @@ class Node( object ):
         if not sub_path:
             if self._auth and params.get('req_user_info') is None:
                 raise HTTP_UNAUTHORIZED_ERROR()
-            
+
             if self.__handler.has_key(http_method):
                 return self.__handler[http_method](**params)
             else:
@@ -109,7 +109,7 @@ class Node( object ):
         self.__handler['HEAD']=handler
 
     def set_handler(self, method, handler):
-        self.__handler[method] = handler
+        self.__handler[method.upper()] = handler
             
     def options(self, handler):
         self.__handler['OPTIONS']=handler

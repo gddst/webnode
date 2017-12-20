@@ -2,7 +2,7 @@ from ._node import Node
 from webnode.utils._wsgiutil import content_type
 
 
-def from_resbot_api(apis, handlers={}, verbose=False):
+def from_resbot_api(apis, handlers=None, verbose=False):
     """
     Build webnode from resbot api
     :param apis: Json format api docuemnt which conform to the Resbot api specifiction
@@ -26,6 +26,9 @@ def from_resbot_api(apis, handlers={}, verbose=False):
             parent_node = child_node
 
         # Only the path's last node has a handler
+        if handlers is None:
+            handlers = {}
+
         handler = handlers.get(name, default_handler)
         if handler and child_node:
             child_node.set_handler(http_method, handler)
