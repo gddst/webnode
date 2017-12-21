@@ -22,14 +22,35 @@ class Node( object ):
         self.__handler = {}
         self._auth=auth
 
+        self.__router=None
+
         if parent:
             parent.add_child( self )
-        
+
+    def response(self,sub_path, http_method,**kwargs):
+        # TODO Authentication
+        # TODO Parameter extraction
+        if self.__router is None:
+            self.__router={}
+            self.build_router(self.__router)
+        print self.__router
+
+        handlers = self.__match_route(sub_path)
+        if handlers:
+            print "@@@@@ Routing Success", handlers
+            handler = handlers.get(http_method.upper())
+            if handler:
+                return handler(**kwargs)
+            else:
+                raise HTTPError(httplib.METHOD_NOT_ALLOWED)
+        else:
+            raise HTTPError(httplib.NOT_FOUND)
+
     def add_child(self,child):
-        
+
         if not self.__children.has_key( child.__path_name ):
             self.__children[ child.__path_name ]=child
-            
+
     def update_child(self,child):
         if self.__children.has_key( child.__path_name ):
             self.__children[ child.__path_name ]=child
@@ -55,6 +76,17 @@ class Node( object ):
                     return child
         return None
 
+    def get_handle_children(self,child_path_name):
+        children = []
+        if child_path_name in self.__children:
+            children.append(self.__children[child_path_name])
+        else:
+            for key in self.__children:
+                if Node.__path_match(child_path_name, key):
+                    child = self.__children[key]
+                    children.append(child)
+        return children
+
     def remove_child(self,child):
         if self.__children.has_key( child.__path_name ):
             self.__children.pop( child.__path_name )
@@ -67,10 +99,23 @@ class Node( object ):
             return "{}/{}".format( self.__parent.get_full_path(), self.__path_name )
 
     def dump_tree_path(self):
-        print self.get_full_path()
+        if self.__handler.keys():
+            print self.get_full_path()
+            print self.__handler.keys()
         if self.__children:
             for child in self.__children:
                 self.__children[child].dump_tree_path()
+
+    def build_router(self, router):
+
+        path = self.get_full_path()
+        for method, handler in self.__handler.iteritems():
+            router.setdefault(path,{})
+            router[path][method] = handler
+
+        if self.__children:
+            for child in self.__children:
+                self.__children[child].build_router(router)
 
     def get_path_name(self):
         return self.__path_name
@@ -78,7 +123,7 @@ class Node( object ):
     def get_handlers(self):
         return self.__handler
 
-    def response(self,sub_path, http_method,**params):
+    def response_(self,sub_path, http_method,**params):
 
         http_method = http_method.upper()
 
@@ -91,7 +136,11 @@ class Node( object ):
             else:
                 raise HTTPError( httplib.METHOD_NOT_ALLOWED )
         else:
-            child = self.get_child(sub_path[0], method=http_method)
+            if len(sub_path)==1:
+                child = self.get_child(sub_path[0], method=http_method)
+            else:
+                child = self.get_child(sub_path[0])
+
             if child:
                 param_name = self.__parse_para(child.get_path_name())
                 if param_name:
@@ -102,6 +151,7 @@ class Node( object ):
                 return child.response( sub_path[1:], http_method, **params )
             else:
                 raise HTTPError( httplib.NOT_FOUND )
+
 
 
     def get(self, handler):
@@ -125,18 +175,32 @@ class Node( object ):
     def options(self, handler):
         self.__handler['OPTIONS']=handler
 
-    def __get_handle_node(self, sub_path, method=None):
-        """
+    def __match_route(self, request_paths):
+        request_path_size = len(request_paths)
+        for route, handlers in self.__router.iteritems():
+            route_paths = [p for p in route.split('/') if p]
+            print route_paths
+            print handlers
+            print request_paths
 
-        :param sub_path:
-        :return:
-        """
-        if not sub_path:
-            return self
-        else:
-            child = self.get_child(sub_path[0], method=method)
-            if child:
-                return child.__get_handle_node(sub_path[1:], method=method)
+            if request_path_size!=len(route_paths):
+                continue
+
+            match_tuples = zip(route_paths, request_paths)
+
+            for y in match_tuples:
+                route_p = y[0]
+                request_p = y[1]
+                # TODO
+                if route_p==request_p:
+                    continue
+
+                if Node.__path_match( request_p, route_p):
+                    continue
+                else:
+                    break
+            else:
+                return handlers
 
     @staticmethod
     def __parse_para( sub_path):
