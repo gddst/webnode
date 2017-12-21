@@ -20,9 +20,10 @@ def from_resbot_api(apis, handlers=None, verbose=False):
         http_method = api.get('method', 'GET')
         auth = api.get('__auth', False)
 
-        for node in paths:
-            child_node = parent_node.get_child(node)
-            child_node = child_node if child_node else Node(node, parent_node, auth=auth)
+        for node_path in paths:
+            child_node = None
+            child_node = parent_node.get_child_(node_path)
+            child_node = child_node if child_node else Node(node_path, parent_node, auth=auth)
             parent_node = child_node
 
         # Only the path's last node has a handler
