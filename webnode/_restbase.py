@@ -32,8 +32,10 @@ class RESTBase(object):
         try:
             request_user = cherrypy.session.get('user')
             if request_user is not None:
-                params['req_user_info']=request_user 
-                return self._root_node.response(vpath, httpmethod, **params)
+                params['req_user_info']=request_user
+                request_paths =  [p for p in self._root_node.get_full_path().split('/') if p]
+                request_paths.extend(vpath)
+                return self._root_node.response(request_paths, httpmethod, **params)
             else:
                 raise cherrypy.HTTPError(401)
             
@@ -49,9 +51,11 @@ class RESTBase(object):
             err_logger.debug(traceback.format_exc())
             traceback.print_exc()
             return http_error_handler(500)
-            
+
+
 def http_error_handler(status):
     cherrypy.serving.response.status = status
     cherrypy.response.headers[http_header.CONTENT_TYPE] = "text/html;charset=utf-8"
     return Renderer.render('error/plain', status=status,
                            reason=httplib.responses.get(status))
+
