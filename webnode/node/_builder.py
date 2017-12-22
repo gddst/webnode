@@ -2,15 +2,20 @@ from ._node import Node
 from webnode.utils._wsgiutil import content_type
 
 
-def from_resbot_api(apis, handlers=None, verbose=False):
+def from_resbot_api(apis, base_path=None, handlers=None, verbose=False):
     """
     Build webnode from resbot api
     :param apis: Json format api docuemnt which conform to the Resbot api specifiction
+    :param base_path:
+    :param handlers:
     :param verbose: Control whether dump the node tree
     :return: webnode
     """
-
     root_node = Node('')
+    if base_path:
+        paths = [p for p in base_path.split('/') if p]
+        for path in paths:
+            root_node = Node(path, root_node)
 
     for name, api in apis.items():
 
