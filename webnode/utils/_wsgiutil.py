@@ -33,3 +33,13 @@ def content_type(response_type):
             return f(*args, **kwargs), response_type
         return wrapper
     return handler
+
+
+def load_webnode_handler(conf):
+    handlers = {}
+
+    for name, loader in conf.items():
+        handlers[name] = loader
+
+    return handlers
+
