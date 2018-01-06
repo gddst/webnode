@@ -7,8 +7,8 @@ def testnode():
     def handler( **params ):
         print '{} response'.format( params['name'] )
 
-    root = Node('root')
-    index = ViewNode( 'index',root,'hello_world' )
+    root = Node('')
+    #index = ViewNode( 'index',root,'hello_world' )
 
     sub_node1 = Node('sub_node1',root)
     sub_node1.set_handler('GET', handler)
@@ -27,4 +27,4 @@ def testnode():
     root.dump_tree_path()
     root.response(['sub_node1'],'GET',name='sub_node1')
     root.response(['sub_node1','leaf_1_a'],'POST',name='leaf_1_a')
-    root.response(['index'],None)
+    #root.response(['index'],None)
