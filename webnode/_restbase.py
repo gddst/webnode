@@ -3,7 +3,10 @@ Created on Oct 19, 2015
 
 @author: gddst
 '''
-import httplib
+try:
+    from http import client as httpclient  # 3
+except:
+    import httplib as httpclient  # 2
 import logging
 import traceback
 
@@ -41,13 +44,13 @@ class RESTBase(object):
             
         except cherrypy.HTTPRedirect:
             raise
-        except cherrypy.HTTPError, e:
+        except cherrypy.HTTPError as e:
             err_logger.debug(traceback.format_exc())
             return http_error_handler(e.status)
-        except HTTPError, e:
+        except HTTPError as e:
             err_logger.debug(traceback.format_exc())
             return http_error_handler(e.status)
-        except Exception ,e :
+        except Exception as e :
             err_logger.debug(traceback.format_exc())
             traceback.print_exc()
             return http_error_handler(500)
@@ -57,5 +60,5 @@ def http_error_handler(status):
     cherrypy.serving.response.status = status
     cherrypy.response.headers[http_header.CONTENT_TYPE] = "text/html;charset=utf-8"
     return Renderer.render('error/plain', status=status,
-                           reason=httplib.responses.get(status))
+                           reason=httpclient.responses.get(status))
 

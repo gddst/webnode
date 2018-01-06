@@ -3,10 +3,7 @@ Created on Dec 16, 2015
 
 @author: gddst
 '''
-try:
-    from http import client as httpclient  # 3
-except:
-    import httplib as httpclient  # 2
+import httplib
 
 
 class HTTPError(Exception):
@@ -23,5 +20,5 @@ class HTTPError(Exception):
     
 class HTTP_UNAUTHORIZED_ERROR(HTTPError):
     
-        def __init__(self, status=httpclient.UNAUTHORIZED):
+        def __init__(self, status=httplib.UNAUTHORIZED):
             super(HTTP_UNAUTHORIZED_ERROR, self).__init__(status)

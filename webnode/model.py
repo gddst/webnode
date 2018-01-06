@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from ConfigParser import ConfigParser
+from configparser import ConfigParser
 
 class DBInstance(object):
     
@@ -33,7 +33,7 @@ class DBInstance(object):
     def query(self,table, **filter):
         new_session=self.__session_maker()
         try:
-            print filter
+            print(filter)
             return new_session.query(table).filter_by(**filter).all()
         finally:
             if new_session:

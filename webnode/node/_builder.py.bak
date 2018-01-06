@@ -17,7 +17,7 @@ def from_resbot_api(apis, base_path=None, handlers=None, verbose=False):
         for path in paths:
             root_node = Node(path, root_node)
 
-    for name, api in list(apis.items()):
+    for name, api in apis.items():
 
         parent_node = root_node
         paths = [p for p in api.get('path', '').split('/') if p]

@@ -4,10 +4,7 @@ Created on Dec 16, 2015
 @author: gddst
 '''
 
-try:
-    from http import client as httpclient  # 3
-except:
-    import httplib as httpclient  # 2
+import http.client
 import re
 
 from webnode import HTTPError
@@ -45,9 +42,9 @@ class Node( object ):
                 kwargs.update(url_params)
                 return handler(**kwargs)
             else:
-                raise HTTPError(httpclient.METHOD_NOT_ALLOWED)
+                raise HTTPError(http.client.METHOD_NOT_ALLOWED)
         else:
-            raise HTTPError(httpclient.NOT_FOUND)
+            raise HTTPError(http.client.NOT_FOUND)
 
     def __match_route(self, request_paths, url_params):
         """
@@ -57,9 +54,9 @@ class Node( object ):
         :return:
         """
         request_path_size = len(request_paths)
-        for route, handlers in list(self.__router.items()):
+        for route, handlers in self.__router.items():
             route_paths = [p for p in route.split('/') if p]
-            if request_path_size != len(route_paths):
+            if request_path_size!=len(route_paths):
                 continue
 
             match_tuples = list(zip(route_paths, request_paths))
@@ -75,7 +72,7 @@ class Node( object ):
                 val = Node.__path_match(request_p, route_p)
                 if val:
                     param = route_p[1:-1]
-                    url_params[param] = val
+                    url_params[param]=val
                 else:
                     break
             else:
@@ -84,9 +81,9 @@ class Node( object ):
     def add_child(self,child):
 
         if child.__path_name not in self.__children:
-            self.__children[child.__path_name] = child
+            self.__children[ child.__path_name ]=child
 
-    def update_child(self, child):
+    def update_child(self,child):
         if child.__path_name in self.__children:
             self.__children[ child.__path_name ]=child
 
@@ -135,20 +132,16 @@ class Node( object ):
 
     def dump_tree_path(self):
         if list(self.__handler.keys()):
-            print((self.get_full_path(),list(self.__handler.keys())))
+            print(self.get_full_path(),list(self.__handler.keys()))
         if self.__children:
             for child in self.__children:
                 self.__children[child].dump_tree_path()
 
     def build_router(self, router):
 
-        """
-
-        :type router: object
-        """
         path = self.get_full_path()
-        for method, handler in list(self.__handler.items()):
-            router.setdefault(path, {})
+        for method, handler in self.__handler.items():
+            router.setdefault(path,{})
             router[path][method] = handler
 
         if self.__children:
@@ -161,7 +154,7 @@ class Node( object ):
     def get_handlers(self):
         return self.__handler
 
-    def response_(self, sub_path, http_method, **params):
+    def response_(self,sub_path, http_method,**params):
 
         http_method = http_method.upper()
 
@@ -172,9 +165,9 @@ class Node( object ):
             if http_method in self.__handler:
                 return self.__handler[http_method](**params)
             else:
-                raise HTTPError(httpclient.METHOD_NOT_ALLOWED)
+                raise HTTPError( http.client.METHOD_NOT_ALLOWED )
         else:
-            if len(sub_path) == 1:
+            if len(sub_path)==1:
                 child = self.get_child(sub_path[0], method=http_method)
             else:
                 child = self.get_child(sub_path[0])
@@ -188,7 +181,7 @@ class Node( object ):
                         params[param_name]=param_value
                 return child.response( sub_path[1:], http_method, **params )
             else:
-                raise HTTPError(httpclient.NOT_FOUND )
+                raise HTTPError( http.client.NOT_FOUND )
 
 
 

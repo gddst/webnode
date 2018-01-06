@@ -4,8 +4,8 @@ from webnode.node import ViewNode
 
 def testnode():
 
-    def handler( **params ):
-        print '{} response'.format( params['name'] )
+    def handler(**params):
+        print('{} response'.format(params['name']))
 
     root = Node('')
     #index = ViewNode( 'index',root,'hello_world' )
@@ -13,7 +13,7 @@ def testnode():
     sub_node1 = Node('sub_node1',root)
     sub_node1.set_handler('GET', handler)
     def a():
-        print 'customized handler'
+        print('customized handler')
     leaf_1_a =  Node('leaf_1_a',sub_node1)
     leaf_1_a.set_handler('POST', handler)
     leaf_1_a.get(a)

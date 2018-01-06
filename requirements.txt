@@ -1,2 +1,4 @@
 werkzeug
 requests
+cherrypy
+jinja2

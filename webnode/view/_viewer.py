@@ -16,3 +16,4 @@ class Viewer(object):
         
     @staticmethod
     def render():
+        pass
