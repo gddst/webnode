@@ -7,7 +7,7 @@ try:
     from http import client as httpclient  # 3
 except:
     import httplib as httpclient  # 2
-
+from urllib.parse import urlparse
 import functools
 from webnode import HTTPError
 
@@ -24,13 +24,13 @@ def webnode_wsgi_app(webnodes, environ, start_response):
         status = '200 OK'
         headers = [('Content-type', response_type)]
         start_response(status, headers)
-
+        response = bytes(response, encoding="utf-8")
         return [response]
     except HTTPError as e:
         status = '{} {}'.format(e.status, httpclient.responses[e.status])
         headers = [('Content-type', 'text/plain')]
         start_response(status, headers)
-        return [str(e)]
+        return [bytes(str(e), encoding="utf-8")]
 
 
 def content_type(response_type):
