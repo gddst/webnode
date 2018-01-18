@@ -21,13 +21,13 @@ class MongoDBUtil(object):
         return MongoClient(host, 27017)
         
 if __name__=='__main__':
-    print dir(pymongo)
+    print((dir(pymongo)))
     client = MongoClient('localhost', 27017)
     db = client.resbot
     collection = db.user_profile
 
     cursor= collection.find()
-    obj =cursor.next()
+    obj =next(cursor)
     while obj:
-        print obj
-        obj=cursor.next()
+        print(obj)
+        obj=next(cursor)

@@ -4,16 +4,16 @@ from webnode.node import ViewNode
 
 def testnode():
 
-    def handler( **params ):
-        print '{} response'.format( params['name'] )
+    def handler(**params):
+        print('{} response'.format(params['name']))
 
-    root = Node('root')
-    index = ViewNode( 'index',root,'hello_world' )
+    root = Node('')
+    #index = ViewNode( 'index',root,'hello_world' )
 
     sub_node1 = Node('sub_node1',root)
     sub_node1.set_handler('GET', handler)
     def a():
-        print 'customized handler'
+        print('customized handler')
     leaf_1_a =  Node('leaf_1_a',sub_node1)
     leaf_1_a.set_handler('POST', handler)
     leaf_1_a.get(a)
@@ -27,4 +27,4 @@ def testnode():
     root.dump_tree_path()
     root.response(['sub_node1'],'GET',name='sub_node1')
     root.response(['sub_node1','leaf_1_a'],'POST',name='leaf_1_a')
-    root.response(['index'],None)
+    #root.response(['index'],None)

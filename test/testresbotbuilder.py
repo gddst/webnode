@@ -1,4 +1,7 @@
-import httplib
+try:
+    from http import client as httpclient  # 3
+except:
+    import httplib as httpclient  # 2
 import unittest
 from webnode.node import from_resbot_api
 from webnode import HTTPError
@@ -31,14 +34,14 @@ class Test(unittest.TestCase):
         try:
             webnodes.response(['a', 'b'], 'get')
         except HTTPError as e:
-            self.assertEqual(e.status, httplib.METHOD_NOT_ALLOWED)
+            self.assertEqual(e.status, httpclient.METHOD_NOT_ALLOWED)
 
         try:
             webnodes.response(['non-existent'], 'get')
         except HTTPError as e:
-            self.assertEqual(e.status, httplib.NOT_FOUND)
+            self.assertEqual(e.status, httpclient.NOT_FOUND)
 
         try:
             webnodes.response(['sensitive'], 'get')
         except HTTP_UNAUTHORIZED_ERROR as e:
-            self.assertEqual(e.status, httplib.UNAUTHORIZED)
+            self.assertEqual(e.status, httpclient.UNAUTHORIZED)

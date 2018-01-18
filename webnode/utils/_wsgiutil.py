@@ -1,6 +1,13 @@
 from wsgiref.util import request_uri
-from urlparse import urlparse
-import httplib
+try:
+    from urllib.parse import urlencode  # 3
+except:
+    from urllib import urlencode  # 2
+try:
+    from http import client as httpclient  # 3
+except:
+    import httplib as httpclient  # 2
+from urllib.parse import urlparse
 import functools
 from webnode import HTTPError
 
@@ -17,13 +24,13 @@ def webnode_wsgi_app(webnodes, environ, start_response):
         status = '200 OK'
         headers = [('Content-type', response_type)]
         start_response(status, headers)
-
+        response = bytes(response, encoding="utf-8")
         return [response]
     except HTTPError as e:
-        status = '{} {}'.format(e.status, httplib.responses[e.status])
+        status = '{} {}'.format(e.status, httpclient.responses[e.status])
         headers = [('Content-type', 'text/plain')]
         start_response(status, headers)
-        return [str(e)]
+        return [bytes(str(e), encoding="utf-8")]
 
 
 def content_type(response_type):
@@ -38,7 +45,7 @@ def content_type(response_type):
 def load_webnode_handler(conf):
     handlers = {}
 
-    for name, loader in conf.items():
+    for name, loader in list(conf.items()):
         handlers[name] = loader
 
     return handlers
