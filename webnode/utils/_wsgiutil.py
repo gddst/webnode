@@ -20,8 +20,7 @@ def webnode_wsgi_app(webnodes, environ, start_response):
     webnode_environ = environ
 
     try:
-        response, response_type = webnodes.response(paths, http_method, **webnode_environ)
-        status = '200 OK'
+        response, response_type, status = webnodes.response(paths, http_method, **webnode_environ)
         headers = [('Content-type', response_type)]
         start_response(status, headers)
         response = bytes(response, encoding="utf-8")

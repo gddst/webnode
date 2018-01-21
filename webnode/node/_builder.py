@@ -1,3 +1,4 @@
+from http import HTTPStatus
 from ._node import Node
 from webnode.utils._wsgiutil import content_type
 
@@ -45,6 +46,6 @@ def from_resbot_api(apis, base_path=None, handlers=None, verbose=False):
     return root_node
 
 
-@content_type("application/json")
+#@content_type("application/json")
 def default_handler(**kwargs):
-    return "Webnode default response!"
+    return "Webnode default response!", "text/plain", "{} {}".format(HTTPStatus.OK.value, HTTPStatus.OK.phrase)
