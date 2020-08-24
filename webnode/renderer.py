@@ -18,7 +18,7 @@ class Renderer( object ):
         Provide a universal method for web page generating.
         All the template local parameter should be provided by "**params"
         """
-        template_dir = webnode.config.get('template_dir')
+        template_dir = params.get('template_dir',webnode.config.get('template_dir'))
 
         jinja2_env = Environment(
                                  loader=FileSystemLoader(template_dir),
